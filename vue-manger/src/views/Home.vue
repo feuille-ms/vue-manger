@@ -24,17 +24,22 @@
           </el-dropdown>
         </div>
       </el-header>
-      <el-main><router-view></router-view></el-main>
+      <el-main>
+        <tabs></tabs>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
   import SideMenu from "./inc/SideMenu.vue";
+  import Tabs from "./inc/Tabs.vue"
+
   export default {
     name: "Index",
     components: {
-      SideMenu
+      SideMenu, Tabs
     },
     data(){
       return{
@@ -60,7 +65,7 @@
           sessionStorage.clear()
 
           this.$store.commit("resetState")
-          this.$router.push("/login")
+          this.$router.push("/login".catch(() => {}))
         })
       }
     }
@@ -109,7 +114,7 @@
 .el-main {
   color: #333;
   text-align: center;
-  line-height: 160px;
+  //line-height: 160px;
   padding: 0;
 }
 
