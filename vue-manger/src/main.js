@@ -10,7 +10,7 @@ import axios from './axios.js'
 Vue.prototype.$axios = axios
 
 Vue.config.productionTip = false
-require("./mock.js")
+// require("./mock.js")
 Vue.use(Elemnet)
 
 new Vue({

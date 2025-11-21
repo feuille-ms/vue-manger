@@ -69,6 +69,7 @@ router.beforeEach((to, from,
         Authorization: localStorage.getItem("token")
       }
     }).then(res => {
+      console.log("后端真实返回的数据：", res.data)
       console.log("路由中响应了的数据", res.data.data.nav)
       store.commit("setMenuList", res.data.data.nav)
       store.commit("setPermList", res.data.data.authoritys)
