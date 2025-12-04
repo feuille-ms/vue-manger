@@ -20,11 +20,11 @@
           <el-input v-model="loginForm.username" style="width: 390px;float: left"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="loginForm.password" style="width: 390px;float: left"></el-input>
+          <el-input v-model="loginForm.password" type="password" style="width: 390px;float: left"></el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="code">
           <el-input v-model="loginForm.code" style="width: 260px;float: left"></el-input>
-          <el-image :src="codeImg" class="codeImg"></el-image>
+          <el-image :src="codeImg" class="codeImg" @click="getCaptcha()"></el-image>
         </el-form-item>
         <el-form-item style="float:left;position:relative;left:10%;margin-top:30px;">
           <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
@@ -36,6 +36,7 @@
   </el-row>
 </template>
 <script>
+import qs from 'qs'
 export default {
   name: 'Login',
   data() {
@@ -65,9 +66,12 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$axios.post('/login', this.loginForm).then(({headers, data}) =>{
-            console.log("headers:", headers);
-            const jwt = data.headers['authorization'] || data.headers['Authorization'];
+          this.$axios.post(
+              '/login' , qs.stringify(this.loginForm),
+              {headers:{'Content-Type' : 'application/x-www-form-urlencoded'}}
+          ).then(res =>{
+            // console.log("headers:", headers);
+            const jwt = res.headers['authorization'] || res.headers['Authorization'];
             console.log("用户点击登录时，提交的随机码:", jwt);
             this.$store.commit('SET_TOKEN', jwt);
             this.$router.push("/index");
@@ -89,7 +93,8 @@ export default {
         if(res.data && res.data.data){
           this.loginForm.token = res.data.data.token || ''
           console.log("mock(模拟服务器生成的随机码:)", this.loginForm.token)
-          this.codeImg = res.data.data.captchaImg
+          this.codeImg = res.data.data.captchaImg || ''
+          this.loginForm.code = ''
         }
       })
       .catch(error => {
