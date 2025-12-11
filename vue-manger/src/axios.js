@@ -44,8 +44,10 @@ request.interceptors.response.use(
             error.message = error.response.data.msg
         }
         if (error.response.status === 401) {// 未授权状态
-
-            router.push("/login").catch(() => {})
+            // 如果当前不在 login 再跳转
+            if (router.currentRoute.path !== '/login') {
+                router.push('/login')
+            }
         }
         Element.Message.error(error.response.data.msg, {duration: 3000})
         return Promise.reject(error)
