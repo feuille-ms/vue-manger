@@ -42,9 +42,9 @@ export default {
   data() {
     return {
       loginForm: {
-        username: '',
-        password: '',
-        code: '',
+        username: 'admin',
+        password: '123456',
+        code: '12345',
         token: ''
       },
       rules: {
@@ -66,19 +66,22 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$axios.post(
-              '/login' , qs.stringify(this.loginForm),
-              {headers:{'Content-Type' : 'application/x-www-form-urlencoded'}}
-          ).then(res =>{
-            // console.log("headers:", headers);
-            const jwt = res.headers['authorization'] || res.headers['Authorization'];
-            console.log("用户点击登录时，提交的随机码:", jwt);
-            this.$store.commit('SET_TOKEN', jwt);
-            this.$router.push("/index");
-          })
-              .catch(error =>{
-                console.log('脊录失败:',error)
+          // 拼接 URL 查询参数的方式
+          const params = new URLSearchParams();
+          params.append('username', this.loginForm.username);
+          params.append('password', this.loginForm.password);
+          params.append('code', this.loginForm.code);
+          params.append('token', this.loginForm.token);
+
+          this.$axios.post('/login?' + params.toString())
+              .then(res => {
+                const jwt = res.headers['authorization'] || res.headers['Authorization'];
+                this.$store.commit('SET_TOKEN', jwt);
+                this.$router.push("/index");
               })
+              .catch(error => {
+                console.error('登录失败:', error);
+              });
         } else {
           console.log('error submit!!');
           return false;
