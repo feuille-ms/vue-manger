@@ -183,9 +183,9 @@
     },
     created() {
       this.getRoleList()
-      this.$axios.get('/sys/menu/list').then(res => {
-        this.permTreedata = res.data.data;
-      })
+      // this.$axios.get('/sys/menu/list').then(res => {
+      //   this.permTreedata = res.data.data;
+      // }).catch(err => {})
     },
 
     methods: {
@@ -286,7 +286,7 @@
         }
         console.log("ids", ids)
 
-        this.$axios.post("/sys/role/delete/" + ids).then(res => {
+        this.$axios.post("/sys/role/delete/",ids).then(res => {
           this.$message({
             showClose: true,
             message: '删除成功',
@@ -295,10 +295,15 @@
               this.getRoleList()
             }
           });
-        })
+        }).catch(err => {})
       },
       permHandle(id){
         this.permDialogVisible = true
+
+        this.$axios.get('/sys/menu/list').then(res => {
+          this.permTreedata = res.data.data;
+        }).catch(err => {})
+
         this.$nextTick(() => {
           this.$axios.get('/sys/role/info/' + id).then(res => {
             this.$refs.permTree.setCheckedKeys(res.data.data.menuIds)

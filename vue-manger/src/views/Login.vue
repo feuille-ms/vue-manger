@@ -42,9 +42,9 @@ export default {
   data() {
     return {
       loginForm: {
-        username: 'admin',
-        password: '123456',
-        code: '12345',
+        username: '',
+        password: '',
+        code: '',
         token: ''
       },
       rules: {
@@ -81,6 +81,7 @@ export default {
               })
               .catch(error => {
                 console.error('登录失败:', error);
+                this.getCaptcha()
               });
         } else {
           console.log('error submit!!');

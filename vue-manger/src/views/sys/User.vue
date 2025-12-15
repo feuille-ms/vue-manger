@@ -55,7 +55,7 @@
 					prop="code"
 					label="角色名称">
 				<template slot-scope="scope" >
-					<el-tag size="small" type="info" v-for="item in scope.row.roles">{{item.name}}</el-tag>
+					<el-tag size="small" type="info" v-for="item in scope.row.sysRoles">{{item.name}}</el-tag>
 				</template>
 
 			</el-table-column>
@@ -231,11 +231,11 @@
 		created() {
 			this.getUserList()
 
-			this.$axios.get("/sys/role/list").then(res => {
-
-				this.roleTreeData = res.data.data.records
-				console.log(this.roleTreeData)
-			})
+			// this.$axios.get("/sys/role/list").then(res => {
+      //
+			// 	this.roleTreeData = res.data.data.records
+			// 	console.log(this.roleTreeData)
+			// }).catch(err => {})
 		},
 		methods: {
 
@@ -306,9 +306,11 @@
 										this.getUserList()
 									}
 								});
-
+                this.resetForm('editForm')
 								this.dialogVisible = false
-							})
+
+							}).catch(err => {})
+            ;
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -339,21 +341,31 @@
 						showClose: true,
 						message: '恭喜你，操作成功',
 						type: 'success',
+            duration:1000,
 						onClose:() => {
 							this.getUserList()
 						}
 					});
-				})
+				}).catch(err => {})
 			},
 
 			roleHandle (id) {
 				this.roleDialogFormVisible = true
-				let roleIds = []
+
+        this.$axios.get("/sys/role/list").then(res => {
+
+          this.roleTreeData = res.data.data.records
+          console.log(this.roleTreeData)
+        }).catch(err => {})
 
 				this.$axios.get('/sys/user/info/' + id).then(res => {
 					this.roleForm = res.data.data
-					this.$refs.roleTree.setCheckedKeys(res.data.data.roles)
-				})
+					let roleIds = []
+          res.data.data.sysRoles.forEach(row => {
+            roleIds.push(row.id)
+          })
+          this.$refs.roleTree.setCheckedKeys(roleIds)
+				}).catch(err => {})
 			},
 			submitRoleHandle(formName) {
 				var roleIds = this.$refs.roleTree.getCheckedKeys()
@@ -371,7 +383,7 @@
 					});
 
 					this.roleDialogFormVisible = false
-				})
+				}).catch(err => {})
 			},
 			repassHandle(id, username) {
 				this.$confirm('将重置用户【' + username + '】的密码, 是否继续?', '提示', {
